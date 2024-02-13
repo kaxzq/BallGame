@@ -11,13 +11,32 @@ This interactive ball simulation allows users to engage with a dynamic environme
 
 ## Specifications
 
-### Input
+#### Add Balls
+- **Input**: Mouse Clicks
+  - **Action**: User clicks the mouse at a desired location within the graphical window.
+- **Output**: Graphical Window
+  - **Result**: A new ball appears at the location of the click.
 
-- **Mouse Clicks**: Add new balls at the location of the click. Clicking on an existing ball may trigger merging.
-- **Keyboard Inputs**: Use specific keys for actions (e.g., space bar to add balls, 'R' to remove all balls).
-- **Mouse Drags** (Optional): Change the trajectory or position of balls manually.
+#### Remove Balls
+- **Input**: Keyboard Input ('R' Key)
+  - **Action**: User presses the 'R' key.
+- **Output**: Graphical Window
+  - **Result**: All balls are removed from the display.
 
-### Output
+#### Merge Balls
+- **Input**: Two Balls Information
+  - **Action**: Two balls come into contact or a user clicks on an existing ball with another ball nearby.
+- **Output**: Larger Ball Information
+  - **Result**: The two balls merge to form a larger ball. The size and other properties of the new ball are determined by the characteristics of the two original balls.
 
-- **Graphical Window**: A visual display of bouncing and interacting balls, with feedback on collisions and merges.
-- **User Interface Elements** (Optional): Enhance control over ball behavior and settings with UI elements like buttons, sliders, or menus.
+#### Change Ball Trajectory
+- **Input**: Mouse Drags (Optional)
+  - **Action**: User clicks and drags a ball to change its trajectory.
+- **Output**: Graphical Window
+  - **Result**: The trajectory of the dragged ball is altered according to the drag direction and speed.
+
+#### UI Control Enhancements (Optional)
+- **Input**: User Interface Elements
+  - **Action**: User interacts with UI elements like buttons, sliders, or menus.
+- **Output**: Graphical Window and Ball Behavior
+  - **Result**: Ball behavior and settings are modified according to the adjustments made with the UI elements.
