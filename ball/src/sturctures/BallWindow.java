@@ -1,8 +1,11 @@
 package sturctures;
 
+import systemTrack.SystemMetricsTracker;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Map;
 
 public class BallWindow extends JFrame {
     private final BallPanel ballPanel;
@@ -15,10 +18,18 @@ public class BallWindow extends JFrame {
         setTitle("Ball Game");
         setLocationRelativeTo(null);
 
-        ballPanel.addMouseListener(new MouseAdapter() {
+        Map<String, SystemMetricsTracker.ProcessMetrics> processMetricsMap = SystemMetricsTracker.getSystemMetrics();
+
+        processMetricsMap.forEach((pid, metrics) -> {
+            ballPanel.addBall(metrics);
+        });
+
+        addKeyListener(new KeyAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                ballPanel.addBall(e.getX(), e.getY());
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_E) {
+                    ballPanel.removeAllBalls();
+                }
             }
         });
 
@@ -26,11 +37,22 @@ public class BallWindow extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_R) {
-                    ballPanel.removeAllBalls();
+                    ballPanel.refreshBalls();
                 }
             }
         });
 
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_Q) {
+                    System.exit(0);
+                }
+            }
+        });
+
+
         setVisible(true);
+
     }
 }

@@ -1,24 +1,31 @@
 package sturctures;
 
+import systemTrack.SystemMetricsTracker;
+
 import java.awt.*;
 
 public class Ball {
-    int x;
-    int y;
-    int radius = Constants.BALL_RADIUS;
-    int dx = Constants.DEFAULT_DX;
-    int dy = Constants.DEFAULT_DY;
+    double x;
+    double y;
+    double radius;
+    double dx = Constants.DEFAULT_DX;
+    double dy = Constants.DEFAULT_DY;
     private final Color color;
 
-    public Ball(int x, int y) {
+    public Ball(int x, int y, SystemMetricsTracker.ProcessMetrics metrics) {
         this.x = x;
         this.y = y;
-        color = new Color((float)Math.random(), (float)Math.random(), (float)Math.random());
+
+        this.radius = metrics.cpuUsage;
+        double speedFactor = calculateSpeedFactor(metrics.cpuUsage);
+        this.dx = Constants.DEFAULT_DX * speedFactor;
+        this.dy = Constants.DEFAULT_DY * speedFactor;
+        this.color = calculateColor(metrics.memorySize);
     }
 
     public void draw(Graphics g) {
         g.setColor(color);
-        g.fillOval(x - radius, y - radius, radius * 2, radius * 2);
+        g.fillOval((int) (x - radius), (int) (y - radius), (int) radius * 2, (int) radius * 2);
     }
 
     public void move(int width, int height) {
@@ -32,15 +39,16 @@ public class Ball {
         }
     }
 
-    public boolean intersects(Ball other) {
-        int distanceSquared = (this.x - other.x) * (this.x - other.x) + (this.y - other.y) * (this.y - other.y);
-        return distanceSquared < (this.radius + other.radius) * (this.radius + other.radius);
+    private double calculateSpeedFactor(double cpuUsage) {
+        return 1.0 + cpuUsage / 100.0;
     }
 
-    public void merge(Ball other) {
-        int totalVolume = (int) (4.0/3 * Math.PI * this.radius * this.radius * this.radius) + (int) (4.0/3 * Math.PI * other.radius * other.radius * other.radius);
-        this.radius = (int) Math.cbrt((3 * totalVolume) / (4 * Math.PI));
-        this.dx += other.dx / 2;
-        this.dy += other.dy / 2;
+    private Color calculateColor(long memorySize) {
+        double normalizedMemorySize = Math.max(0, Math.min(1, ((double) memorySize) / Constants.MAX_MEMORY_SIZE));
+
+        int red = (int) (normalizedMemorySize * 255);
+        int blue = 255 - red;
+
+        return new Color(red, 0, blue);
     }
 }

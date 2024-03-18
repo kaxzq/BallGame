@@ -1,23 +1,28 @@
 package sturctures;
 
+import systemTrack.SystemMetricsTracker;
+
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class BallPanel extends JPanel implements ActionListener {
-    private final List<Ball> balls;
+    private final Map<String, Ball> balls;
 
     public BallPanel() {
-        balls = new ArrayList<>();
+        balls = new HashMap<>();
         Timer timer = new Timer(Constants.TIMER_DELAY, this);
         timer.start();
     }
 
-    public void addBall(int x, int y) {
-        balls.add(new Ball(x, y));
+    public void addBall(SystemMetricsTracker.ProcessMetrics metrics) {
+        Random rand = new Random();
+        int x = rand.nextInt(Constants.WINDOW_WIDTH - 20) + 10;
+        int y = rand.nextInt(Constants.WINDOW_HEIGHT - 20) + 10;
+        balls.put(metrics.pid, new Ball(x, y, metrics));
         repaint();
     }
 
@@ -29,32 +34,26 @@ public class BallPanel extends JPanel implements ActionListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for (Ball ball : balls) {
+        for (Ball ball : balls.values()) {
             ball.draw(g);
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        for (Ball ball : balls) {
+        for (Ball ball : balls.values()) {
             ball.move(getWidth(), getHeight());
         }
-        mergeBalls();
         repaint();
     }
 
-    private void mergeBalls() {
-        for (int i = 0; i < balls.size(); i++) {
-            for (int j = i + 1; j < balls.size(); j++) {
-                Ball ball1 = balls.get(i);
-                Ball ball2 = balls.get(j);
-                if (ball1.intersects(ball2)) {
-                    ball1.merge(ball2);
-                    balls.remove(j);
-                    j--;
-                }
-            }
-        }
+    public void refreshBalls() {
+        removeAllBalls();
+        Map<String, SystemMetricsTracker.ProcessMetrics> metricsMap = SystemMetricsTracker.getSystemMetrics();
+        metricsMap.forEach((pid, metrics) -> {
+            addBall(metrics);
+        });
+
     }
 }
 
